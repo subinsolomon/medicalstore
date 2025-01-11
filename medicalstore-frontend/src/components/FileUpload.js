@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const FileUpload = () => {
+const FileUpload = ({ refreshInventory }) => {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
@@ -19,6 +19,7 @@ const FileUpload = () => {
             .then(data => {
                 console.log(data);
                 alert(data);
+                refreshInventory();
             })
             .catch(error => console.error('Error uploading file:', error));
     };

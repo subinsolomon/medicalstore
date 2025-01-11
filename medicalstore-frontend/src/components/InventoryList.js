@@ -1,18 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-const InventoryList = () => {
-    const [inventory, setInventory] = useState([]);
-
-    useEffect(() => {
-        fetch('http://localhost:8080/api/inventory')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data); // Debug: Check the fetched data
-                setInventory(data);
-            })
-            .catch(error => console.error('Error fetching inventory:', error));
-    }, []);
-
+const InventoryList = ({ inventory = [] }) => {
     return (
         <div>
             <h1>Inventory List</h1>
