@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import InventoryList from './components/Inventory/InventoryList.js';
 import FileUpload from './components/FileUpload';
+import Login from './components/Login/Login.js';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from './redux/slices/authSlice';
+import "./App.css";
+
 
 const App = () => {
     const [inventory, setInventory] = useState([]);
-    const [showInventory,setShowInventory] = useState(false);
+//    const [showInventory,setShowInventory] = useState(false);
+//    const [isLoggedIn, setIsLoggedIn]  = useState(false);
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+        const dispatch = useDispatch();
+
+        const handleLogout = () => {
+            dispatch(logout()); // Update global state
+        };
 
     const fetchInventory = () => {
         fetch('http://localhost:8080/api/inventory')
@@ -14,7 +26,7 @@ const App = () => {
                 console.error('Error fetching inventory:', error);
                 setInventory([]); // Ensure inventory is always an array
             });
-            setShowInventory(true);
+//            setShowInventory(true);
     };
 
     useEffect(() => {
@@ -23,8 +35,10 @@ const App = () => {
 
     return (
         <div className="App">
-            <FileUpload refreshInventory={fetchInventory} />
-            {showInventory && <InventoryList inventory={inventory} />}
+            {!isLoggedIn && <Login /> }
+           { isLoggedIn &&  <><FileUpload refreshInventory={fetchInventory} />
+             <InventoryList inventory={inventory} />
+             <button className = "logout-button" onClick={handleLogout}>Logout</button></>}
         </div>
     );
 };

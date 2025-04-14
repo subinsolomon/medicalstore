@@ -36,3 +36,27 @@
     transform: rotate(360deg);
   }
 }
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.logout-button{
+    position: absolute;
+    top: 10%;
+    right: 7%;
+    background-color: #e93636;
+}
+
+.logout-button:hover{
+    background-color: #f12020;
+}
