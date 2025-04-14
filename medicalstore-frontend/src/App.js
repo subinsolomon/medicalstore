@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import InventoryList from './components/InventoryList';
+import InventoryList from './components/Inventory/InventoryList.js';
 import FileUpload from './components/FileUpload';
 
 const App = () => {
     const [inventory, setInventory] = useState([]);
+    const [showInventory,setShowInventory] = useState(false);
 
     const fetchInventory = () => {
         fetch('http://localhost:8080/api/inventory')
@@ -13,6 +14,7 @@ const App = () => {
                 console.error('Error fetching inventory:', error);
                 setInventory([]); // Ensure inventory is always an array
             });
+            setShowInventory(true);
     };
 
     useEffect(() => {
@@ -22,7 +24,7 @@ const App = () => {
     return (
         <div className="App">
             <FileUpload refreshInventory={fetchInventory} />
-            <InventoryList inventory={inventory} />
+            {showInventory && <InventoryList inventory={inventory} />}
         </div>
     );
 };
