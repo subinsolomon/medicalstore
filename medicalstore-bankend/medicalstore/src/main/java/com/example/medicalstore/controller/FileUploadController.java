@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +44,8 @@ public class FileUploadController {
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
         Iterator<Row> rows = sheet.iterator();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter primaryFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter fallbackFormatter = DateTimeFormatter.ofPattern("MM/dd");
 
         while (rows.hasNext()) {
             Row row = rows.next();
@@ -51,20 +53,49 @@ public class FileUploadController {
                 continue;
             }
             Inventory inventory = new Inventory();
-            inventory.setsNo((long) getNumericCellValue(row.getCell(0)));
-            inventory.setProductName(getCellValue(row.getCell(1)).toString());
-            inventory.setBatchNo(getCellValue(row.getCell(2)).toString());
-            inventory.setExpiryDate(LocalDate.parse(getCellValue(row.getCell(3)).toString(), formatter));
-            inventory.setRate((Double) getNumericCellValue(row.getCell(4)));
-            inventory.setMrp((Double) getNumericCellValue(row.getCell(5)));
-            inventory.setQuantity((int) getNumericCellValue(row.getCell(6)));
+            inventory.setProductName(getCellValue(row.getCell(0)).toString());
+            inventory.setComp(getCellValue(row.getCell(1)).toString());
+            inventory.setQty((int) getNumericCellValue(row.getCell(2)));
+            inventory.setFree((int) getNumericCellValue(row.getCell(3)));
+            inventory.setBatchNo(getCellValue(row.getCell(4)).toString());
+            inventory.setExpiryDate(parseDate(getCellValue(row.getCell(5)).toString(), primaryFormatter, fallbackFormatter));
+            inventory.setPack(getCellValue(row.getCell(6)).toString());
+            inventory.setPtr(getNumericCellValue(row.getCell(7)));
+            inventory.setRate(getNumericCellValue(row.getCell(8)));
+            inventory.setDiscPercent(getNumericCellValue(row.getCell(9)));
+            inventory.setMrp(getNumericCellValue(row.getCell(10)));
+            inventory.setAmount(getNumericCellValue(row.getCell(11)));
+            inventory.setI(getCellValue(row.getCell(12)).toString());
+            inventory.setC(getCellValue(row.getCell(13)).toString());
+            inventory.setS(getCellValue(row.getCell(14)).toString());
+            inventory.setGstAmt(getNumericCellValue(row.getCell(15)));
+            inventory.setHsnCode(getCellValue(row.getCell(16)).toString());
+            inventory.setpRateDisc(getNumericCellValue(row.getCell(17)));
+            inventory.setMrpDisc(getNumericCellValue(row.getCell(18)));
+            inventory.setExpDate(parseDate(getCellValue(row.getCell(19)).toString(), primaryFormatter, fallbackFormatter));
             inventoryList.add(inventory);
         }
         workbook.close();
         return inventoryList;
     }
 
+    private LocalDate parseDate(String dateStr, DateTimeFormatter primaryFormatter, DateTimeFormatter fallbackFormatter) {
+        try {
+            return LocalDate.parse(dateStr, primaryFormatter);
+        } catch (DateTimeParseException e) {
+            try {
+                return LocalDate.parse(dateStr, fallbackFormatter);
+            } catch (DateTimeParseException ex) {
+                // Log the error and handle it appropriately, e.g., set a default date or skip the row
+                return null;
+            }
+        }
+    }
+
     private Object getCellValue(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
         switch (cell.getCellType()) {
             case STRING:
                 return cell.getStringCellValue();
@@ -91,7 +122,9 @@ public class FileUploadController {
     }
 
     private double getNumericCellValue(Cell cell) {
+        if (cell == null) {
+            return 0.0;
+        }
         return cell.getCellType() == CellType.NUMERIC ? cell.getNumericCellValue() : Double.parseDouble(cell.getStringCellValue());
     }
-
 }
