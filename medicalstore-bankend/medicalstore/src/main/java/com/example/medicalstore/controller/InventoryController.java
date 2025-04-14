@@ -14,6 +14,7 @@ public class InventoryController {
     @Autowired
     private InventoryService inventoryService;
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     public List<Inventory> getAllItems() {
         return inventoryService.getAllItems();
