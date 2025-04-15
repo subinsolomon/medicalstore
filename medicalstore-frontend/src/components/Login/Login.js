@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Login.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/slices/authSlice';
+import RegistrationForm from '../RegistrationForm/RegistrationForm.js';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -66,6 +67,7 @@ const Login = () => {
                 {message && <p>{message}</p>}
                 {isLoggedIn && <p>You are logged in!</p>}
             </form>
+            <RegistrationForm />
         </div>
     );
 };
