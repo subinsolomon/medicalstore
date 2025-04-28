@@ -1,0 +1,13 @@
+.fileUpload-outer {
+    width: 38%;
+    left: 26%;
+    position: relative;
+    display: flex;
+    flex-flow: column;
+    align-items: baseline;
+}
+.fileUpload-outer button{
+    width: 40%;
+    align-self: center;
+    margin-top: 2%;
+}
