@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, setAuthFormType } from '../../redux/slices/authSlice';
+import { login, setAuthFormType,setUserRole } from '../../redux/slices/authSlice';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -27,13 +27,15 @@ const Login = () => {
                 },
                 body: JSON.stringify(credentials),
             });
+            const data = await response.json(); // Handle backend response here
 
             if (response.ok) {
-                const data = await response.json(); // Handle backend response here
-                setMessage('Login successful');
+                setMessage(data.message);
                 dispatch(login()); // Update global state
+                dispatch(setUserRole(data.roles));
+                console.log(data);
             } else {
-                setMessage('Invalid username or password.');
+                setMessage(data.message);
             }
         } catch (error) {
             console.error('Login error:', error);

@@ -19,9 +19,12 @@ const authSlice = createSlice({
         setAuthFormType(state, action) {
             state.authFormType = action.payload; // 'login' or 'register'
         },
+        setUserRole(state, action){
+            state.userRole = action.payload;
+        }
     },
 });
 
-export const { login, logout,setAuthFormType } = authSlice.actions;
+export const { login, logout,setAuthFormType,setUserRole } = authSlice.actions;
 
 export default authSlice.reducer;

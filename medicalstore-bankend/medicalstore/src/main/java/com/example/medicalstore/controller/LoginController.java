@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,20 +20,22 @@ public class LoginController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(
+    public ResponseEntity<Map<String, Object>> login(
             @RequestBody UserCredentials credentials, HttpServletResponse response) {
 
-        Map<String, String> responseBody = new HashMap<>();
+        Map<String, Object> responseBody = new HashMap<>();
 
         if (userService.authenticateUser(credentials.getUsername(), credentials.getPassword())) {
-            // Authentication successful
             responseBody.put("message", "Login successful");
-            // Here you would typically generate and set a JWT token or session cookie
+
+            List<String> roles = userService.getUserRoles(credentials.getUsername());
+            responseBody.put("roles", roles);
+
             return ResponseEntity.ok(responseBody);
         } else {
-            // Authentication failed
-            responseBody.put("message", "Invalid username or password");
+            responseBody.put("message", "Invalid username or password ");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
         }
     }
+
 }

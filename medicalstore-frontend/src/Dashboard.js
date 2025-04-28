@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import InventoryList from './components/Inventory/InventoryList.js';
-import FileUpload from './components/FileUpload';
 import Login from './components/Login/Login.js';
 import RegistrationForm from './components/RegistrationForm/RegistrationForm.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from './redux/slices/authSlice';
 import "./App.css";
+import FileUpload from './components/FileUpload/FileUpload.js';
 
 
 const Dashboard = () => {
@@ -39,7 +39,7 @@ const Dashboard = () => {
     return (
         <div className="Dashboard">
             {!isLoggedIn && (authFormType == 'register' ? <RegistrationForm /> : <Login />)}
-            {isLoggedIn && <><FileUpload refreshInventory={fetchInventory} />
+            {(isLoggedIn) && <><FileUpload refreshInventory={fetchInventory} />
                 <InventoryList inventory={inventory} />
                 <button className="logout-button" onClick={handleLogout}>Logout</button></>}
         </div>

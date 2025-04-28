@@ -6,12 +6,15 @@ import com.example.medicalstore.model.RegistrationRequest;
 import com.example.medicalstore.repository.RoleRepository;
 import com.example.medicalstore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.medicalstore.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -42,6 +45,14 @@ public class UserServiceImpl implements UserService{
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+    public List<String> getUserRoles(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
     }
 
     @Transactional
