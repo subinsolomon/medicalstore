@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 //import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './RegistrationForm.css'
+import { setAuthFormType } from '../../redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
+
 
 const RegistrationForm = () => {
-//  const navigate = useNavigate();
+  //  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -105,7 +108,7 @@ const RegistrationForm = () => {
       if (response.data.success) {
         // Registration successful
         alert('Registration successful! Please log in.');
-//        navigate('/login'); // Redirect to login page
+        //        navigate('/login'); // Redirect to login page
       } else {
         // Registration failed with a known reason
         setErrors({ general: response.data.message });
@@ -129,6 +132,11 @@ const RegistrationForm = () => {
       setIsSubmitting(false);
     }
   };
+  const dispatch = useDispatch();
+  const loginButtonHandler = ()=>{
+    dispatch(setAuthFormType('login'));
+
+  }
 
   return (
     <div className="registration-container">
@@ -220,7 +228,8 @@ const RegistrationForm = () => {
       </form>
 
       <div className="login-link">
-        Already have an account? <a href="/login">Log in</a>
+        Already have an account? <button onClick={loginButtonHandler}
+          style={{ background: 'none', border: 'none', color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>Log in</button>
       </div>
     </div>
   );

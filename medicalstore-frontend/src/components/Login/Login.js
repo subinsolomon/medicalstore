@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../redux/slices/authSlice';
-import RegistrationForm from '../RegistrationForm/RegistrationForm.js';
+import { login, setAuthFormType } from '../../redux/slices/authSlice';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -12,6 +11,9 @@ const Login = () => {
     const dispatch = useDispatch();
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
+    const handleRegisterButton = () => {
+        dispatch(setAuthFormType('register'));
+    };
     const handleLogin = async (event) => {
         event.preventDefault();
 
@@ -64,10 +66,14 @@ const Login = () => {
                     />
                 </div>
                 <button type="submit">Login</button>
+                <button onClick={handleRegisterButton}
+                    style={{ background: 'none', border: 'none', color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>
+                    Don't have an account? Register
+                </button>
                 {message && <p>{message}</p>}
                 {isLoggedIn && <p>You are logged in!</p>}
             </form>
-            <RegistrationForm />
+
         </div>
     );
 };

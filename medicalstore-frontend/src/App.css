@@ -52,8 +52,9 @@ button:hover {
 
 .logout-button{
     position: absolute;
-    top: 10%;
-    right: 7%;
+    top: 5%;
+    right: 3%;
+    width: 9%;
     background-color: #e93636;
 }
 
