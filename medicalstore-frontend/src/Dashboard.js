@@ -1,47 +1,63 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import InventoryList from './components/Inventory/InventoryList.js';
 import Login from './components/Login/Login.js';
 import RegistrationForm from './components/RegistrationForm/RegistrationForm.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from './redux/slices/authSlice';
 import "./App.css";
-import FileUpload from './components/FileUpload/FileUpload.js';
-
+import "./Dashboard.css";
+import MyProfile from './components/Profile/MyProfile.js';
+import { switchPage } from './redux/slices/pageSlice.js';
 
 const Dashboard = () => {
-    const [inventory, setInventory] = useState([]);
-    //    const [showInventory,setShowInventory] = useState(false);
-    //    const [isLoggedIn, setIsLoggedIn]  = useState(false);
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const currentPage = useSelector((state) => state.page.currentPage);
     const dispatch = useDispatch();
     const authFormType = useSelector((state) => state.auth.authFormType);
+    const [menuOpen, setMenuOpen] = useState(false);
 
+    const dropdownRef = useRef();
 
     const handleLogout = () => {
-        dispatch(logout()); // Update global state
+        dispatch(logout());
+        setMenuOpen(false);
     };
 
-    const fetchInventory = () => {
-        fetch('http://localhost:8080/api/inventory')
-            .then(response => response.json())
-            .then(data => setInventory(data || []))
-            .catch(error => {
-                console.error('Error fetching inventory:', error);
-                setInventory([]); // Ensure inventory is always an array
-            });
-        //            setShowInventory(true);
-    };
-
+    // ✅ Close dropdown if click outside
     useEffect(() => {
-        fetchInventory();
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     return (
         <div className="Dashboard">
-            {!isLoggedIn && (authFormType == 'register' ? <RegistrationForm /> : <Login />)}
-            {(isLoggedIn) && <><FileUpload refreshInventory={fetchInventory} />
-                <InventoryList inventory={inventory} />
-                <button className="logout-button" onClick={handleLogout}>Logout</button></>}
+            {!isLoggedIn ? (
+                authFormType === 'register' ? <RegistrationForm /> : <Login />
+            ) : (
+                <>
+                    <div className="profile-container" ref={dropdownRef}>
+                        <div className="profile-icon" onClick={() => setMenuOpen(!menuOpen)}>
+                            👤
+                        </div>
+                        {menuOpen && (
+                            <div className="profile-dropdown">
+                                <div className="dropdown-item" onClick={() => { dispatch(switchPage('myProfile')); setMenuOpen(false); }}>My Profile</div>
+                                <div className="dropdown-item" onClick={handleLogout}>Logout</div>
+                            </div>
+                        )}
+                    </div>
+                    {currentPage === 'dashboard' && <InventoryList />}
+                    {currentPage === 'myProfile' && <MyProfile />}
+                </>
+            )}
         </div>
     );
 };

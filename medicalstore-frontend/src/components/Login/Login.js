@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, setAuthFormType,setUserRole } from '../../redux/slices/authSlice';
+import { login, setAuthFormType, setUserRole } from '../../redux/slices/authSlice';
+import apiFetch from '../../utils/apiFetch';
+import { switchPage } from '../../redux/slices/pageSlice';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -14,28 +16,37 @@ const Login = () => {
     const handleRegisterButton = () => {
         dispatch(setAuthFormType('register'));
     };
+
     const handleLogin = async (event) => {
         event.preventDefault();
 
-        const credentials = { username, password };
+        const formData = new URLSearchParams();
+        formData.append('username', username);
+        formData.append('password', password);
 
         try {
-            const response = await fetch('http://localhost:8080/api/login', {
+            const response = await apiFetch('/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: JSON.stringify(credentials),
+                body: formData,
+                credentials: 'include', // Important: allows session cookie to be saved
             });
-            const data = await response.json(); // Handle backend response here
 
             if (response.ok) {
-                setMessage(data.message);
-                dispatch(login()); // Update global state
-                dispatch(setUserRole(data.roles));
-                console.log(data);
+                // Optionally fetch user details after login
+                const profileRes = await apiFetch('/profile', {
+                    credentials: 'include',
+                });
+                const profileData = await profileRes.json();
+
+                dispatch(login());
+                dispatch(setUserRole(profileData.roles || []));
+                setMessage('Login successful');
+                dispatch(switchPage('dashboard'))
             } else {
-                setMessage(data.message);
+                setMessage('Invalid username or password');
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -44,7 +55,7 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
+        <div className="login-container card">
             <form className="login-form" onSubmit={handleLogin}>
                 <h1>Login</h1>
                 <div>
@@ -68,14 +79,22 @@ const Login = () => {
                     />
                 </div>
                 <button type="submit">Login</button>
-                <button onClick={handleRegisterButton}
-                    style={{ background: 'none', border: 'none', color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>
+                <button
+                    type="button"
+                    onClick={handleRegisterButton}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'blue',
+                        textDecoration: 'underline',
+                        cursor: 'pointer'
+                    }}
+                >
                     Don't have an account? Register
                 </button>
                 {message && <p>{message}</p>}
                 {isLoggedIn && <p>You are logged in!</p>}
             </form>
-
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './FileUpload.css'
+import apiFetch from '../../utils/apiFetch';
 
 const FileUpload = ({ refreshInventory }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -12,7 +13,7 @@ const FileUpload = ({ refreshInventory }) => {
         const formData = new FormData();
         formData.append('file', selectedFile);
 
-        fetch('http://localhost:8080/api/upload', {
+        apiFetch('/upload', {
             method: 'POST',
             body: formData,
         })

@@ -1,8 +1,27 @@
-import React from 'react';
+import apiFetch from '../../utils/apiFetch';
+import FileUpload from '../FileUpload/FileUpload';
 import './InventoryList.css';
+import React, { useEffect, useState } from 'react';
 
-const InventoryList = ({ inventory = [] }) => {
-    return (
+
+const InventoryList = () => {
+    const [inventory, setInventory] = useState([]);
+    const fetchInventory = () => {
+        apiFetch('/inventory')
+            .then(response => response.json())
+            .then(data => setInventory(data || []))
+            .catch(error => {
+                console.error('Error fetching inventory:', error);
+                setInventory([]); // Ensure inventory is always an array
+            });
+        //            setShowInventory(true);
+    };
+
+    useEffect(() => {
+        fetchInventory();
+    }, []);
+    return (<>
+        <FileUpload refreshInventory={fetchInventory} />
         <div>
             <h1>Inventory List</h1>
             <table className="inventory-table">
@@ -65,7 +84,7 @@ const InventoryList = ({ inventory = [] }) => {
                     )}
                 </tbody>
             </table>
-        </div>
+        </div></>
     );
 };
 

@@ -139,7 +139,7 @@ const RegistrationForm = () => {
   }
 
   return (
-    <div className="registration-container">
+    <div className="card registration-container">
       <h2>Create an Account</h2>
       <form onSubmit={handleSubmit}>
         {errors.general && (

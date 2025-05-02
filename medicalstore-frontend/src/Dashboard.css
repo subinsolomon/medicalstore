@@ -1,0 +1,41 @@
+/* Profile menu container stays fixed */
+.profile-container {
+    position: absolute;
+    top: 2%;
+    right: 3%;
+    z-index: 1000;
+    display: inline-block;
+  }
+  
+  /* Icon styling – no margin shifts */
+  .profile-icon {
+    font-size: 28px;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+  }
+  
+  /* Absolutely position the dropdown */
+  .profile-dropdown {
+    position: absolute;
+    top: 40px; /* below the icon */
+    right: 0;
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+    width: 150px;
+    text-align: left;
+  }
+  
+  /* Dropdown item styling */
+  .dropdown-item {
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f0f0f0;
+  }
+  
